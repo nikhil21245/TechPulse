@@ -33,7 +33,7 @@ A comprehensive learning platform built with Spring Boot microservices architect
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/techpulse.git
+git clone https://github.com/nikhil21245/techpulse.git
 cd techpulse
 ```
 
@@ -195,7 +195,7 @@ This project is licensed under the MIT License.
 
 ## 👤 Author
 
-**Your Name**
+**Nikhil kusale**
 - GitHub: [@yourusername](https://github.com/nikhil21245)
 - LinkedIn: [Your Profile](https://linkedin.com/in/nikhil-kusale-2567a0200)
 - Email: nikhilkusale2018@gmail.com

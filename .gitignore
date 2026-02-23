@@ -1,0 +1,36 @@
+# Compiled class files
+*.class
+target/
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+logs/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application properties with secrets
+**/application-local.yml
+**/application-prod.yml
+
+# Database
+*.db
+*.sqlite
+
+# Maven
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar

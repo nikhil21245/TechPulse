@@ -1,0 +1,209 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+        # ===== USER SERVICE - AUTH (PUBLIC) =====
+        - id: user-service-auth
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/auth/**
+
+        # ===== USER SERVICE - USERS (PROTECTED) =====
+        - id: user-service-users
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - AuthenticationFilter
+            - AddRequestHeader=X-Gateway, TechPulse-Gateway
+
+        # ===== ARTICLE SERVICE - PUBLIC =====
+        - id: article-service-public-all
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles
+            - Method=GET
+
+        - id: article-service-trending
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles/trending
+
+        - id: article-service-category
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles/category/**
+
+        - id: article-service-get-one
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles/{id}
+            - Method=GET
+
+        # ===== ARTICLE SERVICE - PROTECTED =====
+        - id: article-service-create
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles
+            - Method=POST
+          filters:
+            - AuthenticationFilter
+            - AddRequestHeader=X-Gateway, TechPulse-Gateway
+
+        - id: article-service-update
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles/{id}
+            - Method=PUT
+          filters:
+            - AuthenticationFilter
+
+        - id: article-service-delete
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/articles/{id}
+            - Method=DELETE
+          filters:
+            - AuthenticationFilter
+
+        # ===== QUIZ SERVICE - PUBLIC (Browse quizzes) =====
+        - id: quiz-service-test
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz/test
+
+        - id: quiz-service-get-all
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz
+            - Method=GET
+
+        - id: quiz-service-get-one
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz/{id}
+            - Method=GET
+
+        - id: quiz-service-by-topic
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz/topic/**
+
+        # ===== QUIZ SERVICE - PROTECTED (Create, Submit) =====
+        - id: quiz-service-create
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz
+            - Method=POST
+          filters:
+            - AuthenticationFilter
+            - AddRequestHeader=X-Gateway, TechPulse-Gateway
+
+        - id: quiz-service-submit
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz/submit
+            - Method=POST
+          filters:
+            - AuthenticationFilter
+            - AddRequestHeader=X-Gateway, TechPulse-Gateway
+
+        - id: quiz-service-attempts
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/quiz/attempts/**
+          filters:
+            - AuthenticationFilter
+
+        # ===== TEST ROUTES =====
+        - id: article-test
+          uri: lb://ARTICLE-SERVICE
+          predicates:
+            - Path=/api/test/**
+
+        # ===== GATEWAY INFO =====
+        - id: gateway-info
+          uri: lb://API-GATEWAY
+          predicates:
+            - Path=/gateway/**
+        # ===== QUESTION ROUTES =====
+        - id: question-create
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/questions
+            - Method=POST
+          filters:
+            - AuthenticationFilter
+
+        - id: question-get-all-by-quiz
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/questions/quiz/**
+
+        - id: question-get-update-delete
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/questions/{id}
+          filters:
+            - AuthenticationFilter  # Protected for PUT/DELETE
+
+        # ===== OPTION ROUTES =====
+        - id: option-create
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/options/question/**
+            - Method=POST
+          filters:
+            - AuthenticationFilter
+
+        - id: option-get
+          uri: lb://QUIZ-SERVICE
+          predicates:
+            - Path=/api/options/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,routes,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.techpulse.api_gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG

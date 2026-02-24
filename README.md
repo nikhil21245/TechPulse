@@ -196,8 +196,8 @@ This project is licensed under the MIT License.
 ## 👤 Author
 
 **Nikhil kusale**
-- GitHub: [@yourusername](https://github.com/nikhil21245)
-- LinkedIn: [Your Profile](https://linkedin.com/in/nikhil-kusale-2567a0200)
+- GitHub: [@nikhil21245](https://github.com/nikhil21245)
+- LinkedIn: [Nihkil kusale](https://linkedin.com/in/nikhil-kusale-2567a0200)
 - Email: nikhilkusale2018@gmail.com
 
 ## 🙏 Acknowledgments
